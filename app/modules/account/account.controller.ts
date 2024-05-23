@@ -12,7 +12,8 @@ import { ModelPaginatorContract } from '@adonisjs/lucid/types/model';
 export default class AccountController {
   constructor(private userService: AccountService) {}
 
-  async index({ request, response }: HttpContext) {
+  async index({ auth, request, response }: HttpContext) {
+    await auth.use('api').authenticate()
     try {
       // Получаем параметры запроса с помощью деструктуризации и задаем значения по умолчанию
       const { perPage = 20, currentPage = 1 } = request.only(['perPage', 'currentPage']);
@@ -43,7 +44,9 @@ export default class AccountController {
     }
   }
 
-  async show({ response, params }: HttpContext) {
+  async show({ auth, response, params }: HttpContext) {
+    await auth.use('api').authenticate()
+    
     const result: Account | null = await Account.find(params.id)
 
     if(!result) {
