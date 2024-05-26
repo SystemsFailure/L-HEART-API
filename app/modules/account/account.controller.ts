@@ -1,6 +1,6 @@
 import { inject } from '@adonisjs/core';
 import type { HttpContext } from '@adonisjs/core/http'
-import AccountService from './account.service.js';
+// import AccountService from './account.service.js';
 import { createAccountValidator } from '#validators/create_account';
 import Account from '#models/account';
 import User from '#models/user';
@@ -10,7 +10,7 @@ import { ModelPaginatorContract } from '@adonisjs/lucid/types/model';
 
 @inject()
 export default class AccountController {
-  constructor(private userService: AccountService) {}
+  // constructor(private userService: AccountService) {}
 
   async index({ auth, request, response }: HttpContext) {
     await auth.use('api').authenticate()
@@ -46,7 +46,7 @@ export default class AccountController {
 
   async show({ auth, response, params }: HttpContext) {
     await auth.use('api').authenticate()
-    
+
     const result: Account | null = await Account.find(params.id)
 
     if(!result) {
@@ -75,10 +75,10 @@ export default class AccountController {
     
     await account.save()
 
-    const user: User = new User();
-    user.account_id = account.id
+    // const user: User = new User();
+    // user.account_id = account.id
 
-    await user.save()
+    // await user.save()
     const token: AccessToken = await Account.accessTokens.create(account)
 
     return response.apiSuccess({
