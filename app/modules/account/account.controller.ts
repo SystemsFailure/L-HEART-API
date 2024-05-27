@@ -3,7 +3,6 @@ import type { HttpContext } from '@adonisjs/core/http'
 // import AccountService from './account.service.js';
 import { createAccountValidator } from '#validators/create_account';
 import Account from '#models/account';
-import User from '#models/user';
 import { AccessToken } from '@adonisjs/auth/access_tokens';
 import { ModelPaginatorContract } from '@adonisjs/lucid/types/model';
 

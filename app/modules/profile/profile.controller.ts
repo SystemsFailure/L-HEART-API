@@ -1,11 +1,10 @@
-import Account from "#models/account";
 import Profile from "#models/profile";
 import User from "#models/user";
-import { AccessToken } from "@adonisjs/auth/access_tokens";
 import { HttpContext } from "@adonisjs/core/http";
 
 export default class ProfileController {
 
+    // Врядле будет использоваться, т.к через подгрузку связанных с account данных можно пользоваться
     public async index({auth, response} : HttpContext) {
         await auth.use('api').authenticate()
         try {
@@ -17,18 +16,22 @@ export default class ProfileController {
     }
 
     public async create({ auth, request, response }: HttpContext) {
-        await auth.use('api').authenticate()
+        const account = await auth.use('api').authenticate()
         try {
-            const profile: Profile = await Profile.create({})
-
-            const account: (Account & {
-                currentAccessToken: AccessToken;
-            }) | undefined = auth.user;
+            const profileData = request.input('profile');
+            if(!profileData) {
+                console.error('Data for profile not found in body request');
+                return response.apiError('Data for profile not found in body request', '', false);
+            }
+            const profile: Profile = await Profile.create({
+                ...profileData
+            });
 
             if (!account) {
                 return response.status(401).json({ error: 'This user is not unauthorized' });
             }
 
+            // Создаем ассоциацию user
             await User.create({
                 account_id: account.id,
                 profile_id: profile.id
