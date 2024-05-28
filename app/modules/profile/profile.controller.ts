@@ -5,8 +5,7 @@ import { HttpContext } from "@adonisjs/core/http";
 export default class ProfileController {
 
     // Врядле будет использоваться, т.к через подгрузку связанных с account данных можно пользоваться
-    public async index({auth, response} : HttpContext) {
-        await auth.use('api').authenticate()
+    public async index({response} : HttpContext) {
         try {
             const profiles: Profile[] = await Profile.all()
             return response.apiSuccess(profiles)
@@ -15,8 +14,8 @@ export default class ProfileController {
         }
     }
 
-    public async create({ auth, request, response }: HttpContext) {
-        const account = await auth.use('api').authenticate()
+    public async create({ request, response }: HttpContext) {
+        const account = request.account
         try {
             const profileData = request.input('profile');
             if(!profileData) {
@@ -43,8 +42,7 @@ export default class ProfileController {
         }
     }
 
-    public async update({auth, request, response, params }: HttpContext) {
-        await auth.use('api').authenticate()
+    public async update({request, response, params }: HttpContext) {
         try {
             const profileId = params.id; // Получаем ID профиля из параметров маршрута
             const dataToUpdate = request.only(['education', 'description', 'sex']); // Получаем только те поля, которые нужно обновить

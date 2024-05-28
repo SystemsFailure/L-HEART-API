@@ -6,7 +6,7 @@ import hash from "@adonisjs/core/services/hash";
 
 
 export default class AuthController {
-    public async login({ request, response, auth }: HttpContext) {
+    public async login({ request, response }: HttpContext) {
         const payload : {
             email: string,
             password: string,
@@ -23,7 +23,7 @@ export default class AuthController {
                 return response.apiError('account for this crediteals not found, check your fields')
             }
 
-            const account = await auth.use('api').authenticate()
+            const account = request.account;
 
             if(!account.currentAccessToken) {
                 return response.apiError('AccessToken is not defined');
