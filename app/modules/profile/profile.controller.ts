@@ -1,5 +1,6 @@
 import Profile from "#models/profile";
 import User from "#models/user";
+import { updateValidator } from "#validators/profile/update";
 import { HttpContext } from "@adonisjs/core/http";
 
 export default class ProfileController {
@@ -17,6 +18,8 @@ export default class ProfileController {
     public async create({ request, response }: HttpContext) {
         const account = request.account
         try {
+            // rem: Здесь получать данные профиля прогоняя их через валидацию.
+            // Так же предусмотреть тип для результата валидации.
             const profileData = request.input('profile');
             if(!profileData) {
                 console.error('Data for profile not found in body request');
@@ -43,19 +46,59 @@ export default class ProfileController {
     }
 
     public async update({request, response, params }: HttpContext) {
+        const profileId = params.id; // Получаем ID профиля из параметров маршрута
+        const dataToUpdate = request.only([
+            'education', 
+            'description', 
+            'sex',
+            'dateBirth',
+            'growth',
+            'weight',
+            'children',
+            'applicationActivity',
+            'profession',
+            'religious',
+            'eyeColor',
+        ]); // Получаем только те поля, которые нужно обновить
+        // const payload = await updateValidator.validate(dataToUpdate)
         try {
-            const profileId = params.id; // Получаем ID профиля из параметров маршрута
-            const dataToUpdate = request.only(['education', 'description', 'sex']); // Получаем только те поля, которые нужно обновить
-
-            const profile: Profile = await Profile.findOrFail(profileId); // Находим профиль по ID или возвращаем 404
-
+            const accountId: number | undefined = request.account?.id;
+      
+            if (!accountId) {
+              console.debug('accountId является пустой либо не валидный');
+              return response.apiError('accountId is not valid');
+            }
+      
+            if (!profileId) {
+              console.debug('profileId является пустой либо не валидный');
+              return response.apiError('profileId is not valid');
+            }
+      
+            console.log(dataToUpdate, profileId, accountId);
+      
+            const profile: Profile | null = await Profile.query()
+              .whereHas('accounts', (q) => {
+                q.where('accounts.id', accountId);
+              })
+              .where('id', profileId)
+              .first();
+      
+            if (!profile) {
+              console.debug('Profile с данным id не найден');
+              return response.apiError('profile not found');
+            }
+      
             profile.merge(dataToUpdate); // Объединяем новые данные с существующими
             await profile.save(); // Сохраняем изменения
-
+      
             return response.apiSuccess(profile);
-        } catch (error) {
-            return response.status(500).json({ error: 'Unable to update profile' });
-        }
+          } catch (error) {
+            if (error.messages) {
+              return response.status(422).json({ error: 'Validation Error', messages: error.messages });
+            }
+      
+            return response.status(500).json({ error: error.message || error });
+          }
     }
 
     public async delete({ params, response }: HttpContext) {
@@ -70,11 +113,6 @@ export default class ProfileController {
         } catch (error) {
             return response.status(500).json({ error: 'Unable to delete profile' });
         }
-    }
-
-    // для объединения с users по id профиля и id аккаунта
-    private async bind() {
-
     }
 }
 
