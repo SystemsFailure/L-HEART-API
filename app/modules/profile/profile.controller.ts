@@ -1,6 +1,6 @@
 import Profile from "#models/profile";
 import User from "#models/user";
-import { updateValidator } from "#validators/profile/update";
+// import { updateValidator } from "#validators/profile/update";
 import { HttpContext } from "@adonisjs/core/http";
 
 export default class ProfileController {
@@ -101,18 +101,49 @@ export default class ProfileController {
           }
     }
 
-    public async delete({ params, response }: HttpContext) {
+    // ps: Данный маршрут вприцнепе не нужен, ибо профиль отдельно от аккаунта удалить нельзя, только если удаляется аккаунт -
+    // то удаление происходит через общую таблицу users, и каскадно удаляется все остальное и профиль и аккаунт связанные с этой записью
+    public async delete({ params, response, auth }: HttpContext) {
         try {
-            const profileId = params.id; // Получаем ID профиля из параметров маршрута
+            // Получаем ID профиля из параметров маршрута
+            const profileId = params.id;
 
-            const profile: Profile = await Profile.findOrFail(profileId); // Находим профиль по ID или возвращаем 404
+            // Проверка на валидный UUID (предполагая, что ID профиля - это UUID)
+            if (!this.isValidUUID(profileId)) {
+                return response.status(400).json({ error: 'Invalid profile ID format' });
+            }
 
-            await profile.delete(); // Удаляем профиль
+            // Проверка, существует ли профиль
+            const profile: Profile | null = await Profile.query().where('profile.id', profileId).preload('users').firstOrFail();
+            if (!profile) {
+                return response.status(404).json({ error: 'Profile not found' });
+            }
 
+            // Проверка прав доступа (если применимо)
+            if (auth.user!.id !== profile.users[0].id) {
+                return response.status(403).json({ error: 'You do not have permission to delete this profile' });
+            }
+
+            // Удаляем профиль
+            await profile.delete();
+
+            // Возвращаем успешный ответ
             return response.apiSuccess({ message: 'Profile deleted successfully' });
         } catch (error) {
+
+            // Различные типы ошибок могут быть обработаны здесь (например, ошибка базы данных)
+            if (error.name === 'ModelNotFoundException') {
+                return response.status(404).json({ error: 'Profile not found' });
+            }
+
             return response.status(500).json({ error: 'Unable to delete profile' });
         }
+    }
+
+    // Простой метод для проверки валидности UUID
+    private isValidUUID(uuid: string): boolean {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        return uuidRegex.test(uuid);
     }
 }
 
