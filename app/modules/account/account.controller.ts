@@ -45,13 +45,17 @@ export default class AccountController {
   }
 
   async show({ response, params }: HttpContext) {
-    const result: Account | null = await Account.find(params.id)
+    const result: Account | null = await Account.query().select("*").where('id', params.id).firstOrFail();
 
     if(!result) {
       return response.apiError({}, `По данному Id=${params.id} аккаунт не найден`)
     }
 
-    return response.apiSuccess(result)
+    return response.apiSuccess({
+      account: Object.assign({}, {...result.serialize()}, {
+        password: null,
+      })
+    })
   }
 
   async create({ request, response }: HttpContext) {

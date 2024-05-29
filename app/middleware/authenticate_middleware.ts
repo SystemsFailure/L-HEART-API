@@ -1,3 +1,5 @@
+import Account from '#models/account';
+import { AccessToken } from '@adonisjs/auth/access_tokens';
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
 
@@ -6,7 +8,9 @@ export default class AuthenticateMiddleware {
     /**
      * Middleware logic goes here (before the next call)
      */
-    const account = await ctx.auth.use('api').authenticate();
+    const account: Account & {
+      currentAccessToken: AccessToken;
+    } = await ctx.auth.use('api').authenticate();
 
     // Make the account available in the request object
     ctx.request.account = account;
