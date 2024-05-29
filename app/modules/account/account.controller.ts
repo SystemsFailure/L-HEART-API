@@ -102,9 +102,12 @@ export default class AccountController {
         return response.status(404).json({ error: `Account with ID=${accountId} not found` });
       }
 
-      // Удаляем связанные записи в таблице users
+      // Удаление всех связанных токенов, если такие имеются
+      const tokens: AccessToken[] = await Account.accessTokens.all(account)
+      tokens.forEach(async (token: AccessToken) => {
+        token && await Account.accessTokens.delete(account, token.identifier)
+      });
 
-      
       // Удаляем аккаунт и профиль
       await account.profile.delete()
       await account.delete();
