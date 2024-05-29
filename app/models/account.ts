@@ -1,21 +1,11 @@
+import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { DateTime } from 'luxon'
+import { BaseModel, column, hasOne } from '@adonisjs/lucid/orm'
+import type { HasOne } from '@adonisjs/lucid/types/relations'
 import Profile from './profile.js'
-import type { ManyToMany } from '@adonisjs/lucid/types/relations'
-import User from './user.js'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
-import { 
-  BaseModel,
-  column,
-  manyToMany,
-  // belongsTo,
-} from '@adonisjs/lucid/orm'
-import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
-// import type { BelongsTo } from '@adonisjs/lucid/types/relations'
-// import Photo from './Photo'
-// import Phone from './Phone'
-// import Role from './Role'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -25,15 +15,6 @@ const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
 export default class Account extends compose(BaseModel, AuthFinder) {
   @column({ isPrimary: true })
   declare id: number
-
-  @column()
-  declare photoId: number
-
-  @column()
-  declare phoneId: number
-
-  @column()
-  declare roleId: number
 
   @column()
   declare name: string
@@ -53,20 +34,11 @@ export default class Account extends compose(BaseModel, AuthFinder) {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  
-  @manyToMany(() => Profile, {
-    pivotTable: 'users',
-    pivotForeignKey: 'profile_id',
-    pivotRelatedForeignKey: 'account_id'
-  })
-  declare profiles: ManyToMany<typeof Profile>
-  
-  @manyToMany(() => User, {
-    pivotTable: 'users',
-    pivotForeignKey: 'account_id',
-    pivotRelatedForeignKey: 'profile_id'
-  })
-  declare users: ManyToMany<typeof User>
+  @hasOne(() => Profile)
+  declare profile: HasOne<typeof Profile>
+
+  static accessTokens = DbAccessTokensProvider.forModel(Account)
+}
 
   // @belongsTo(() => Photo)
   // declare photo: BelongsTo<typeof Photo>
@@ -76,7 +48,5 @@ export default class Account extends compose(BaseModel, AuthFinder) {
 
   // @belongsTo(() => Role)
   // declare role: BelongsTo<typeof Role>
-  static accessTokens = DbAccessTokensProvider.forModel(Account)
 
-}
 

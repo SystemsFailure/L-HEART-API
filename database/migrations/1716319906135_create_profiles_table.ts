@@ -18,7 +18,7 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id') // Primary key
-
+      table.integer('account_id').unsigned().references('id').inTable('accounts').onDelete('CASCADE')
       // table.integer('interest_id').unsigned().references('id').inTable('interests').onDelete('CASCADE')
       // table.integer('sport_id').unsigned().references('id').inTable('sports').onDelete('CASCADE')
       table.timestamp('date_birth', { useTz: true })
