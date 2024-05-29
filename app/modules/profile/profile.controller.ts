@@ -1,5 +1,4 @@
 import Profile from "#models/profile";
-import User from "#models/user";
 // import { updateValidator } from "#validators/profile/update";
 import { HttpContext } from "@adonisjs/core/http";
 
@@ -17,7 +16,6 @@ export default class ProfileController {
 
     public async create({ request, response }: HttpContext) {
         const account = request.account
-        console.log(account)
         try {
             // rem: Здесь получать данные профиля прогоняя их через валидацию.
             // Так же предусмотреть тип для результата валидации.
@@ -26,18 +24,14 @@ export default class ProfileController {
                 console.error('Data for profile not found in body request');
                 return response.apiError('Data for profile not found in body request', '', false);
             }
-            const profile: Profile = await Profile.create({
-                ...profileData
-            });
-
+            
             if (!account) {
                 return response.status(401).json({ error: 'This user is not unauthorized' });
             }
-
-            // Создаем ассоциацию user
-            await User.create({
-                account_id: account.id,
-                profile_id: profile.id
+            
+            const profile: Profile = await Profile.create({
+                ...profileData,
+                accountId: account.id
             });
 
             return response.apiSuccess(profile);
@@ -78,7 +72,7 @@ export default class ProfileController {
             console.log(dataToUpdate, profileId, accountId);
       
             const profile: Profile | null = await Profile.query()
-              .whereHas('accounts', (q) => {
+              .whereHas('account', (q) => {
                 q.where('accounts.id', accountId);
               })
               .where('id', profileId)
@@ -115,14 +109,9 @@ export default class ProfileController {
             }
 
             // Проверка, существует ли профиль
-            const profile: Profile | null = await Profile.query().where('profile.id', profileId).preload('users').firstOrFail();
+            const profile: Profile | null = await Profile.query().where('profile.id', profileId).firstOrFail();
             if (!profile) {
                 return response.status(404).json({ error: 'Profile not found' });
-            }
-
-            // Проверка прав доступа (если применимо)
-            if (auth.user!.id !== profile.users[0].id) {
-                return response.status(403).json({ error: 'You do not have permission to delete this profile' });
             }
 
             // Удаляем профиль

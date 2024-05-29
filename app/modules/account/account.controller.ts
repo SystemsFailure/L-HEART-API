@@ -5,7 +5,6 @@ import { createAccountValidator } from '#validators/create_account';
 import Account from '#models/account';
 import { AccessToken } from '@adonisjs/auth/access_tokens';
 import { ModelPaginatorContract } from '@adonisjs/lucid/types/model';
-import User from '#models/user';
 import db from '@adonisjs/lucid/services/db'
 import Profile from '#models/profile';
 
@@ -23,7 +22,7 @@ export default class AccountController {
       // Создаем базовый запрос
       const query = Account.query()
         .select('id', 'email', 'name', 'created_at', 'updated_at')
-        .preload('profiles');
+        .preload('profile');
 
       // Применяем фильтры и поиск, если они заданы
       if (search) {
@@ -92,26 +91,23 @@ export default class AccountController {
       const accountId = params.id;
 
       // Находим аккаунт
-      const account: Account | null = await Account.query({ client: trx }).where('id', accountId).first();
+      const account: Account | null = await Account
+        .query({ client: trx })
+        .where('id', accountId)
+        .preload('profile')
+        .first();
 
       if (!account) {
         await trx.rollback();
         return response.status(404).json({ error: `Account with ID=${accountId} not found` });
       }
 
-      // Находим связанные записи в таблице users
-      const users: User[] = await User.query({ client: trx }).where('account_id', accountId).preload('profiles');
-
       // Удаляем связанные записи в таблице users
-      await Promise.all(users.map(async (user: User) => {
-        user.profiles.map((profile: Profile) => {
-          profile.delete();
-        })
-        await user.delete() // Передаем транзакцию в метод delete
-      }));
 
-      // Удаляем аккаунт
-      await account.delete(); // Передаем транзакцию в метод delete
+      
+      // Удаляем аккаунт и профиль
+      await account.profile.delete()
+      await account.delete();
 
       await trx.commit(); // Подтверждаем транзакцию
       return response.apiSuccess({ message: 'Account and related users deleted successfully' });
