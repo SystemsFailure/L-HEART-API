@@ -17,6 +17,7 @@ export default class ProfileController {
 
     public async create({ request, response }: HttpContext) {
         const account = request.account
+        console.log(account)
         try {
             // rem: Здесь получать данные профиля прогоняя их через валидацию.
             // Так же предусмотреть тип для результата валидации.

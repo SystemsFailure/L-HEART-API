@@ -56,15 +56,15 @@ export default class Account extends compose(BaseModel, AuthFinder) {
   
   @manyToMany(() => Profile, {
     pivotTable: 'users',
-    pivotForeignKey: 'account_id',
-    pivotRelatedForeignKey: 'profile_id'
+    pivotForeignKey: 'profile_id',
+    pivotRelatedForeignKey: 'account_id'
   })
   declare profiles: ManyToMany<typeof Profile>
   
   @manyToMany(() => User, {
     pivotTable: 'users',
     pivotForeignKey: 'account_id',
-    pivotRelatedForeignKey: 'user_id'
+    pivotRelatedForeignKey: 'profile_id'
   })
   declare users: ManyToMany<typeof User>
 

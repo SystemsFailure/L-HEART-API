@@ -5,6 +5,9 @@ import { createAccountValidator } from '#validators/create_account';
 import Account from '#models/account';
 import { AccessToken } from '@adonisjs/auth/access_tokens';
 import { ModelPaginatorContract } from '@adonisjs/lucid/types/model';
+import User from '#models/user';
+import db from '@adonisjs/lucid/services/db'
+import Profile from '#models/profile';
 
 
 @inject()
@@ -80,5 +83,50 @@ export default class AccountController {
             value: token.value!.release(),
         }
     }, "Аккаунт успешно создан")
+  }
+
+  async delete({ params, response }: HttpContext) {
+    const trx = await db.transaction(); // Начинаем транзакцию
+
+    try {
+      const accountId = params.id;
+
+      // Находим аккаунт
+      const account: Account | null = await Account.query({ client: trx }).where('id', accountId).first();
+
+      if (!account) {
+        await trx.rollback();
+        return response.status(404).json({ error: `Account with ID=${accountId} not found` });
+      }
+
+      // Находим связанные записи в таблице users
+      const users: User[] = await User.query({ client: trx }).where('account_id', accountId).preload('profiles');
+
+      // Удаляем связанные записи в таблице users
+      await Promise.all(users.map(async (user: User) => {
+        user.profiles.map((profile: Profile) => {
+          profile.delete();
+        })
+        await user.delete() // Передаем транзакцию в метод delete
+      }));
+
+      // Удаляем аккаунт
+      await account.delete(); // Передаем транзакцию в метод delete
+
+      await trx.commit(); // Подтверждаем транзакцию
+      return response.apiSuccess({ message: 'Account and related users deleted successfully' });
+    } catch (error) {
+      try {
+        await trx.rollback(); // Откатываем транзакцию в случае ошибки
+      } catch (rollbackError) {
+        console.error('Rollback error:', rollbackError);
+      }
+      console.error('Error deleting account:', error);
+      return response.status(500).json({ error: 'Unable to delete account and related users' });
+    }
+  }
+
+  public async preDelete() {
+
   }
 }

@@ -62,8 +62,8 @@ export default class Profile extends BaseModel {
 
   @manyToMany(() => User, {
     pivotTable: 'users',
-    pivotForeignKey: 'profile_id',
-    pivotRelatedForeignKey: 'user_id'
+    pivotForeignKey: 'account_id',
+    pivotRelatedForeignKey: 'profile_id'
   })
   declare users: ManyToMany<typeof User>
 }

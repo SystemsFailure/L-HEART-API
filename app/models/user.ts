@@ -22,14 +22,14 @@ export default class User extends BaseModel {
 
   @manyToMany(() => Account, {
     pivotTable: 'users',
-    pivotForeignKey: 'user_id',
+    pivotForeignKey: 'profile_id',
     pivotRelatedForeignKey: 'account_id'
   })
   declare accounts: ManyToMany<typeof Account>
 
   @manyToMany(() => Profile, {
     pivotTable: 'users',
-    pivotForeignKey: 'user_id',
+    pivotForeignKey: 'account_id',
     pivotRelatedForeignKey: 'profile_id'
   })
   declare profiles: ManyToMany<typeof Profile>
