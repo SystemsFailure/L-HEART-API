@@ -6,7 +6,6 @@ import Account from '#models/account';
 import { AccessToken } from '@adonisjs/auth/access_tokens';
 import { ModelPaginatorContract } from '@adonisjs/lucid/types/model';
 import db from '@adonisjs/lucid/services/db'
-import Profile from '#models/profile';
 
 
 @inject()
@@ -22,12 +21,11 @@ export default class AccountController {
       // Создаем базовый запрос
       const query = Account.query()
         .select('id', 'email', 'name', 'created_at', 'updated_at')
-        .preload('profile');
+        .preload('profile')
 
       // Применяем фильтры и поиск, если они заданы
       if (search) {
-        query.where('name', 'LIKE', `%${search}%`)
-            .orWhere('email', 'LIKE', `%${search}%`);
+        query.where('name', 'LIKE', `%${search}%`).orWhere('email', 'LIKE', `%${search}%`)
       }
 
       if (filter) {
@@ -47,12 +45,12 @@ export default class AccountController {
   async show({ response, params }: HttpContext) {
     const result: Account | null = await Account.query().select("*").where('id', params.id).firstOrFail();
 
-    if(!result) {
+    if (!result) {
       return response.apiError({}, `По данному Id=${params.id} аккаунт не найден`)
     }
 
     return response.apiSuccess({
-      account: Object.assign({}, {...result.serialize()}, {
+      account: Object.assign({}, { ...result.serialize() }, {
         password: null,
       })
     })
@@ -64,27 +62,27 @@ export default class AccountController {
     const password: string = request.input('password');
 
     const payload: {
-        email: string;
-        password: string;
+      email: string;
+      password: string;
     } = await createAccountValidator.validate({ email, password })
 
     const account: Account = new Account()
     account.fill({
-        name,
-        email: payload.email,
-        password: payload.password,
+      name,
+      email: payload.email,
+      password: payload.password,
     })
-    
+
     await account.save()
 
     const token: AccessToken = await Account.accessTokens.create(account)
 
     return response.apiSuccess({
-        account: account.serialize(),
-        token: {
-            type: 'bearer',
-            value: token.value!.release(),
-        }
+      account: account.serialize(),
+      token: {
+        type: 'bearer',
+        value: token.value!.release(),
+      }
     }, "Аккаунт успешно создан")
   }
 

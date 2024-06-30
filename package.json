@@ -9,8 +9,6 @@
     "build": "node ace build",
     "dev": "node ace serve --hmr",
     "test": "node ace test",
-    "lint": "eslint .",
-    "format": "prettier --write .",
     "typecheck": "tsc --noEmit"
   },
   "imports": {
@@ -43,10 +41,8 @@
     "@swc/core": "^1.5.3",
     "@types/luxon": "^3.4.2",
     "@types/node": "^20.12.10",
-    "eslint": "^8.57.0",
     "hot-hook": "^0.2.5",
     "pino-pretty": "^11.0.0",
-    "prettier": "^3.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
@@ -65,9 +61,5 @@
       "./app/controllers/**/*.ts",
       "./app/middleware/*.ts"
     ]
-  },
-  "eslintConfig": {
-    "extends": "@adonisjs/eslint-config/app"
-  },
-  "prettier": "@adonisjs/prettier-config"
+  }
 }
