@@ -40,22 +40,22 @@
     "@japa/runner": "^3.1.4",
     "@swc/core": "^1.5.3",
     "@types/luxon": "^3.4.2",
-    "@types/node": "^20.12.10",
+    "@types/node": "^20.14.9",
     "hot-hook": "^0.2.5",
     "pino-pretty": "^11.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.3"
   },
   "dependencies": {
     "@adonisjs/auth": "^9.2.1",
     "@adonisjs/core": "^6.9.0",
     "@adonisjs/cors": "^2.2.1",
     "@adonisjs/lucid": "^20.6.0",
-    "@types/redis": "^4.0.11",
+    "@types/ioredis": "^5.0.0",
     "@vinejs/vine": "^2.0.0",
+    "ioredis": "^5.4.1",
     "luxon": "^3.4.4",
     "pg": "^8.11.5",
-    "redis": "^4.6.15",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.7.5"
   },
