@@ -51,9 +51,11 @@
     "@adonisjs/core": "^6.9.0",
     "@adonisjs/cors": "^2.2.1",
     "@adonisjs/lucid": "^20.6.0",
+    "@types/redis": "^4.0.11",
     "@vinejs/vine": "^2.0.0",
     "luxon": "^3.4.4",
     "pg": "^8.11.5",
+    "redis": "^4.6.15",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.7.5"
   },
