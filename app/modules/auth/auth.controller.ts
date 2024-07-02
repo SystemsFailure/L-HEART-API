@@ -40,7 +40,6 @@ export default class AuthController {
         } catch (error) {
             response.apiError(error)
         }
-
     }
 
     private async findUserByEmailAndPassword(email: string, password: string) : Promise<Account | null> {
