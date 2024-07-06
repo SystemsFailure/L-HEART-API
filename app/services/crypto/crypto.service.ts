@@ -142,21 +142,59 @@ export class SymmetricCryptoService extends CryptoServiceAbstract {
 // Класс для работы с асимметричным шифрованием
 export class AsymmetricCryptoService extends CryptoServiceAbstract {
     constructor() {
-      super('rsa');
+        super('rsa');
     }
-  
+
     async encrypt(data: string, publicKey: string): Promise<string> {
-      const buffer = Buffer.from(data, 'utf8');
-      const encrypted = crypto.publicEncrypt(publicKey, buffer);
-      return encrypted.toString('base64');
+        const buffer = Buffer.from(data, 'utf8');
+        const encrypted = crypto.publicEncrypt(publicKey, buffer);
+        return encrypted.toString('base64');
     }
-  
+
     async decrypt(data: string, privateKey: string): Promise<string> {
-      const buffer = Buffer.from(data, 'base64');
-      const decrypted = crypto.privateDecrypt({
-        key: privateKey,
-        passphrase: '',
-      }, buffer);
-      return decrypted.toString('utf8');
+        const buffer = Buffer.from(data, 'base64');
+        const decrypted = crypto.privateDecrypt({
+            key: privateKey,
+            passphrase: '',
+        }, buffer);
+        return decrypted.toString('utf8');
     }
-  }
+}
+
+
+// Пример использования
+// async function main() {
+//     const symmetricCrypto = new SymmetricCryptoService();
+//     const asymmetricCrypto = new AsymmetricCryptoService();
+  
+//     const symmetricKey = 'supersecretkey';
+//     const asymmetricPublicKey = '-----BEGIN PUBLIC KEY-----\n' +
+//                                 'MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAs+P2QDn6o7XaKgl2nsoN\n' +
+//                                 // Ваш публичный ключ здесь
+//                                 '...';
+//     const asymmetricPrivateKey = '-----BEGIN PRIVATE KEY-----\n' +
+//                                  'MIIJQgIBADANBgkqhkiG9w0BAQEFAASCCSwwggkoAgEAAoICAQDQnSmJx1Q8RE96\n' +
+//                                  // Ваш приватный ключ здесь
+//                                  '...';
+  
+//     const data = 'Hello, world!';
+  
+//     // Симметричное шифрование и дешифрование
+//     const encryptedSymmetric = await symmetricCrypto.encrypt(data, symmetricKey);
+//     console.log('Encrypted symmetric:', encryptedSymmetric);
+//     const decryptedSymmetric = await symmetricCrypto.decrypt(encryptedSymmetric, symmetricKey);
+//     console.log('Decrypted symmetric:', decryptedSymmetric);
+  
+//     // Асимметричное шифрование и дешифрование
+//     const encryptedAsymmetric = await asymmetricCrypto.encrypt(data, asymmetricPublicKey);
+//     console.log('Encrypted asymmetric:', encryptedAsymmetric);
+//     const decryptedAsymmetric = await asymmetricCrypto.decrypt(encryptedAsymmetric, asymmetricPrivateKey);
+//     console.log('Decrypted asymmetric:', decryptedAsymmetric);
+  
+//     // Верификация данных
+//     const signature = crypto.createSign('RSA-SHA256').update(data).sign(asymmetricPrivateKey, 'base64');
+//     const verified = symmetricCrypto.verify(data, signature, asymmetricPublicKey);
+//     console.log('Verified:', verified);
+//   }
+  
+//   main().catch(err => console.error('Error:', err));
