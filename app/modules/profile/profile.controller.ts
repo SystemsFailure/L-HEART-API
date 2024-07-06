@@ -98,7 +98,7 @@ export default class ProfileController {
 
     // ps: Данный маршрут вприцнепе не нужен, ибо профиль отдельно от аккаунта удалить нельзя, только если удаляется аккаунт -
     // то удаление происходит через общую таблицу users, и каскадно удаляется все остальное и профиль и аккаунт связанные с этой записью
-    public async delete({ params, response, auth }: HttpContext) {
+    public async delete({ params, response }: HttpContext) {
         try {
             // Получаем ID профиля из параметров маршрута
             const profileId = params.id;

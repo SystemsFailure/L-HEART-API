@@ -9,7 +9,14 @@
     "build": "node ace build",
     "dev": "node ace serve --hmr",
     "test": "node ace test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:cus": "npm run build:check-status && npm run build:pull && npm run build:install && npm run build:build && npm run dev",
+
+
+    "build:check-status": "git status",
+    "build:pull": "git pull",
+    "build:install": "npm install",
+    "build:build": "npm run build"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",

@@ -1,5 +1,6 @@
 import { Redis } from 'ioredis';
 
+// Редис клиент синглентон
 class RedisClient {
   private static instance: Redis;
 
