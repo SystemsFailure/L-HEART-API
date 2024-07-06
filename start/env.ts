@@ -27,5 +27,15 @@ export default await Env.create(new URL('../', import.meta.url), {
   DB_PORT: Env.schema.number(),
   DB_USER: Env.schema.string(),
   DB_PASSWORD: Env.schema.string.optional(),
-  DB_DATABASE: Env.schema.string()
+  DB_DATABASE: Env.schema.string(),
+
+  /*
+  |----------------------------------------------------------
+  | S3 Variables
+  |----------------------------------------------------------
+  */
+  S3_ENDPOINT: Env.schema.string(),
+  S3_BUCKET_NAME: Env.schema.string(),
+  S3_PUB_KEY: Env.schema.string(),
+  S3_SECRET_KEY: Env.schema.string(),
 })

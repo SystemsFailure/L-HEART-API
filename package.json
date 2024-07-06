@@ -11,8 +11,6 @@
     "test": "node ace test",
     "typecheck": "tsc --noEmit",
     "build:cus": "npm run build:check-status && npm run build:pull && npm run build:install && npm run build:build && npm run dev",
-
-
     "build:check-status": "git status",
     "build:pull": "git pull",
     "build:install": "npm install",
@@ -59,8 +57,10 @@
     "@adonisjs/core": "^6.9.0",
     "@adonisjs/cors": "^2.2.1",
     "@adonisjs/lucid": "^20.6.0",
+    "@types/aws-sdk": "^2.7.0",
     "@types/ioredis": "^5.0.0",
     "@vinejs/vine": "^2.0.0",
+    "aws-sdk": "^2.1655.0",
     "ioredis": "^5.4.1",
     "jsonwebtoken": "^9.0.2",
     "luxon": "^3.4.4",
