@@ -138,3 +138,25 @@ export class SymmetricCryptoService extends CryptoServiceAbstract {
         return decrypted;
     }
 }
+
+// Класс для работы с асимметричным шифрованием
+export class AsymmetricCryptoService extends CryptoServiceAbstract {
+    constructor() {
+      super('rsa');
+    }
+  
+    async encrypt(data: string, publicKey: string): Promise<string> {
+      const buffer = Buffer.from(data, 'utf8');
+      const encrypted = crypto.publicEncrypt(publicKey, buffer);
+      return encrypted.toString('base64');
+    }
+  
+    async decrypt(data: string, privateKey: string): Promise<string> {
+      const buffer = Buffer.from(data, 'base64');
+      const decrypted = crypto.privateDecrypt({
+        key: privateKey,
+        passphrase: '',
+      }, buffer);
+      return decrypted.toString('utf8');
+    }
+  }
