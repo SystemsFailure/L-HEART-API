@@ -170,11 +170,11 @@ export class AsymmetricCryptoService extends CryptoServiceAbstract {
 //     const symmetricKey = 'supersecretkey';
 //     const asymmetricPublicKey = '-----BEGIN PUBLIC KEY-----\n' +
 //                                 'MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAs+P2QDn6o7XaKgl2nsoN\n' +
-//                                 // Ваш публичный ключ здесь
+//                                 // публичный ключ здесь
 //                                 '...';
 //     const asymmetricPrivateKey = '-----BEGIN PRIVATE KEY-----\n' +
 //                                  'MIIJQgIBADANBgkqhkiG9w0BAQEFAASCCSwwggkoAgEAAoICAQDQnSmJx1Q8RE96\n' +
-//                                  // Ваш приватный ключ здесь
+//                                  // приватный ключ здесь
 //                                  '...';
   
 //     const data = 'Hello, world!';
