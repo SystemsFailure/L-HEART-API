@@ -1,11 +1,12 @@
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { DateTime } from 'luxon'
-import { BaseModel, column, hasOne } from '@adonisjs/lucid/orm'
-import type { HasOne } from '@adonisjs/lucid/types/relations'
+import { BaseModel, belongsTo, column, hasOne } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasOne } from '@adonisjs/lucid/types/relations'
 import Profile from './profile.js'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
+import Role from './role.js'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -28,6 +29,9 @@ export default class Account extends compose(BaseModel, AuthFinder) {
   @column()
   declare online: boolean
 
+  @column()
+  declare role_id: number
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
@@ -37,6 +41,9 @@ export default class Account extends compose(BaseModel, AuthFinder) {
   @hasOne(() => Profile)
   declare profile: HasOne<typeof Profile>
 
+  @belongsTo(() => Role)
+  declare role: BelongsTo<typeof Role>
+  
   static accessTokens = DbAccessTokensProvider.forModel(Account)
 }
 
@@ -46,7 +53,5 @@ export default class Account extends compose(BaseModel, AuthFinder) {
   // @belongsTo(() => Phone)
   // declare phone: BelongsTo<typeof Phone>
 
-  // @belongsTo(() => Role)
-  // declare role: BelongsTo<typeof Role>
 
 

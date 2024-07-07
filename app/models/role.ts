@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import Permission from './permission.js'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
+import Account from './account.js'
 
 export default class Role extends BaseModel {
   @column({ isPrimary: true }) // Идентификатор роли
@@ -24,4 +25,7 @@ export default class Role extends BaseModel {
    */
   @hasMany(() => Permission) // Отношение "имеет много разрешений"
   declare permissions: HasMany<typeof Permission>
+
+  @hasMany(() => Account) // Отношение "имеет много аккаунтов"
+  declare accounts: HasMany<typeof Account>
 }
