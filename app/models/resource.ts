@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import Permission from './permission.js'
-import { HasMany } from '@adonisjs/lucid/types/relations'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
 
 // Модель Ресурсов, это могут быть вьюшки, фрагменты, компоненты, представления, по сути просто view-ки на клиентах
 export default class Resource extends BaseModel {
