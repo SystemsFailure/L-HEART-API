@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
+import Permission from './permission.js'
+import { HasMany } from '@adonisjs/lucid/types/relations'
 
 // Модель Ресурсов, это могут быть вьюшки, фрагменты, компоненты, представления, по сути просто view-ки на клиентах
 export default class Resource extends BaseModel {
@@ -29,4 +31,10 @@ export default class Resource extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true }) // Дата и время последнего обновления записи
   declare updatedAt: DateTime
+
+  /**
+   * Связи
+  */
+  @hasMany(() => Permission) // Отношение "имеет много разрешениям"
+  declare permissions: HasMany<typeof Permission>
 }

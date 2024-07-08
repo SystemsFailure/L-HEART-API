@@ -3,6 +3,7 @@ import { BaseModel, column, belongsTo, hasMany } from '@adonisjs/lucid/orm'
 import Role from './role.js'
 import PermissionMethod from './permission_method.js'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import Resource from './resource.js'
 
 export default class Permission extends BaseModel {
   @column({ isPrimary: true }) // Идентификатор разрешения
@@ -25,6 +26,9 @@ export default class Permission extends BaseModel {
    */
   @belongsTo(() => Role) // Отношение "принадлежит роли"
   declare role: BelongsTo<typeof Role>
+
+  @belongsTo(() => Resource) // Отношение "принадлежит ресурсу"
+  declare resource: BelongsTo<typeof Resource>
 
   @hasMany(() => PermissionMethod) // Отношение "имеет много методов разрешений"
   declare permissionMethods: HasMany<typeof PermissionMethod>
