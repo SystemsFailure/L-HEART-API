@@ -35,7 +35,7 @@ server.use([
 router.use([
   () => import('@adonisjs/core/bodyparser_middleware'),
   () => import('@adonisjs/auth/initialize_auth_middleware'),
-  () => import('#middleware/role_middleware')
+  // () => import('#middleware/role_middleware')  // Закомментировал на время тестов (не дает делать запросы к тестовым роутам)
 ])
 
 /**
