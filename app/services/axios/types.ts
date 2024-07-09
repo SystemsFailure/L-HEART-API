@@ -1,9 +1,10 @@
+// Параметры, которые принимает функция для создания базового адреса
 export type BuildURLParams = {
     protocol?: string,
     url?: string,
     port?: string,
 }
-
+// Опции для метода запроса request
 export interface RequestOptions {
     method: string;
     url: string;
@@ -12,7 +13,7 @@ export interface RequestOptions {
     timeout?: number;
     maxRedirects?: number;
 }
-
+// Тип кастомного объекта ошибки
 export interface ErrorObject {
     error: string;
     name?: string;
