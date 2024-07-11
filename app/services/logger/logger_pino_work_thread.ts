@@ -6,7 +6,7 @@
     ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        
     ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        
      ░▒▓██████▓▒░ ░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░ 
-*/                                         
+*/
 
 // Рабочий процесс логгера pino
 import { pino } from "pino";
@@ -21,24 +21,24 @@ import { Logger } from 'pino';
 export type LogScope = 'services' | 'controllers' | 'database';
 // ./ - корень приложения ( L-HEART-API/logs/... )
 const logsPathes = {
-    controllers:  './logs/controllers.log',
-    database:     './logs/database.log',
-    services:     './logs/services.log',
+    controllers: './logs/controllers.log',
+    database: './logs/database.log',
+    services: './logs/services.log',
 }
 
 export type logLevels = 'info' | 'debug' | 'error' | 'fatal' | 'silent' | 'trace' | 'warn';
 export type TypeLog = "INFO" | "ERROR";
 export interface LogFilterOptions {
     typeLog?: TypeLog;
-    fromDT?: number; 
+    fromDT?: number;
     toDT?: number;
     fnName?: string;
     excludeFnName?: string;
 }
 export interface StdOut extends LogFilterOptions { enable: boolean };
-export type StdIn = { 
-    scope: LogScope, 
-    level: logLevels, 
+export type StdIn = {
+    scope: LogScope,
+    level: logLevels,
     message: string,
     output?: StdOut
 };
@@ -60,36 +60,36 @@ function splitFullDirPath(fullPath: string): ResultSplitFullDirPath {
         const resultFiles: string[] = [];           // Результирующий массив названий файлов (Обычно один файл выходит). Пример: ['service.log']
         const pathSplit = fullPath.split('/');
         // Извлечение корня пути
-        if(pathSplit[0] === '.') {
-            if(pathSplit[1] === '') {
-                rootDir = './' 
+        if (pathSplit[0] === '.') {
+            if (pathSplit[1] === '') {
+                rootDir = './'
             }
             rootDir = `./${pathSplit[1] ?? ''}`;
         }
         // Сперва в массив директорий записываем корень
         resultDirs.push('.');
         let computedRootForArray = rootDir.split('/')[1];
-        if(computedRootForArray !== '' && computedRootForArray !== '.') resultDirs.push(computedRootForArray);
-        
+        if (computedRootForArray !== '' && computedRootForArray !== '.') resultDirs.push(computedRootForArray);
+
         // проходим по массиву строк пути исключая первые два элемента относящиеся к корню
         const lastPathes = pathSplit.slice(2);
         lastPathes.forEach((path: string) => {
             // если перебираемый элемент делится на строки по точке то элемент является файлом с каким-либо расширением
-            if(path.split('.').length > 1) {
+            if (path.split('.').length > 1) {
                 resultFiles.push(path);
-            } 
+            }
             // Если элемент не проходит разделение на строки по точке то это директория
             else resultDirs.push(path);
         });
-       
-        resultDirPath = (resultDirs.length === 1 && resultDirs[0] === '.')? './' : resultDirs.join('/');   // вычисление результрующего пути для директорий
-        resultFilesPath = (resultFiles.length)? ['', resultFiles].join('/') : '';                          // вычисление результрующего пути для файла(-ов)
-        return { 
-            dirs: resultDirs, 
-            files: resultFiles, 
-            dirPath: resultDirPath, 
-            filePath: 
-            resultFilesPath 
+
+        resultDirPath = (resultDirs.length === 1 && resultDirs[0] === '.') ? './' : resultDirs.join('/');   // вычисление результрующего пути для директорий
+        resultFilesPath = (resultFiles.length) ? ['', resultFiles].join('/') : '';                          // вычисление результрующего пути для файла(-ов)
+        return {
+            dirs: resultDirs,
+            files: resultFiles,
+            dirPath: resultDirPath,
+            filePath:
+                resultFilesPath
         } as ResultSplitFullDirPath;
     } catch (err) {
         console.error('Ошибка при разделении полного пути директории на имена директорий и файлов');
@@ -108,8 +108,8 @@ async function checkExistsLogsDirectory(dirname: string = './logs') {
                     В таком случае, перехватываем исключение помещяя текущий путь в итоговой массив для того чтобы в дальнейшем по этому массиву 
                     произошло создание log- директории и файлов
                 */
-                notExistsDirnames.push(item); 
-            }); 
+                notExistsDirnames.push(item);
+            });
             promises.push(promise); // помещаем промисы в массив чтобы после цикла последовательно выполнить их и получить массив путей либо пустой массив
         });
         await Promise.all(promises); // ожидается выполнение всех промисов проверки
@@ -124,17 +124,17 @@ async function checkExistsLogsDirectory(dirname: string = './logs') {
 async function initDirectoryLogs(pathes: string[] | []) {
     try {
         const promises: Promise<string | undefined | void>[] = [];
-        
+
         pathes.forEach((path: string) => {
             const { dirPath, filePath } = splitFullDirPath(path);
             const promiseDir = fsPromise.mkdir(dirPath, { recursive: true }).catch((error) => {
-                throw {msg: `Произошла ошибка при создании дериктории ${dirPath}`, error };
+                throw { msg: `Произошла ошибка при создании дериктории ${dirPath}`, error };
             })
             promises.push(promiseDir);
 
-            if(!!filePath) {
+            if (!!filePath) {
                 const promiseFile = fsPromise.writeFile(dirPath + filePath, '').catch((error) => {
-                    throw {msg: `Произошла ошибка при создании файла ${filePath}`, error };
+                    throw { msg: `Произошла ошибка при создании файла ${filePath}`, error };
                 })
                 promises.push(promiseFile);
             }
@@ -226,7 +226,7 @@ function ExecCore(streams: ReturnType<typeof initLogSteams>) {
      | | | '_ \ | || __|  ###################################################   | |     / _ \ | '__|/ _ \
     _| |_| | | || || |_   ###################################################   | \__/\| (_) || |  |  __/
     \___/|_| |_||_| \__|  ###################################################    \____/ \___/ |_|   \___|
-*/ 
+*/
 // Для инциализации ядра логгирования, необходимо выполнить проверку на существования директории и файлов логгирования
 checkExistsLogsDirectory()
     .then((res) => res)  // либо вернет пустой массив (значит директори и файлы существуют), либо вызовет исключение
@@ -234,9 +234,9 @@ checkExistsLogsDirectory()
         console.error('then > checkExistsLogsDirectory: => ', err);
     })  // перехватываем вероятные ошибки (которых по идее быть не должно)
     // если цепочка не потерпела участи одного известного корабля ⛵️, то выполняем создание дериктории логгирования (с log-файлами) 🙂
-    .then(async(res) => {
-        if(res) {
-            if(res.length) {  // если массив путей дериктории не пуст, значит какой-либо директории не существует и её нужно создать
+    .then(async (res) => {
+        if (res) {
+            if (res.length) {  // если массив путей дериктории не пуст, значит какой-либо директории не существует и её нужно создать
                 return await initDirectoryLogs(res);
             } else {
                 console.log('All directories already exists');
@@ -267,76 +267,76 @@ checkExistsLogsDirectory()
 */
 // Фильтрация массива полученных логгов по их типу например INFO или ERROR
 function filterLogsByTypeLog(array: Array<any>, typeLog?: TypeLog) {
-    if(typeLog) {
+    if (typeLog) {
         return array.filter(entry => {
-            if(!!entry?.msg && typeof entry.msg === 'string') {
+            if (!!entry?.msg && typeof entry.msg === 'string') {
                 // Извлечение имени функции из ключа msg логга
                 const computeTypeLog: string = entry.msg.split(' |')[0];
-                if(computeTypeLog && computeTypeLog !== typeLog) return false;
+                if (computeTypeLog && computeTypeLog !== typeLog) return false;
                 else return true;
             }
         });
-    } 
+    }
     // Если фильтрация не была выполнена то возвращаем исходный массив
     else return array;
 }
 
 // Фильтрация массива полученных логгов по имени функции в опции excludeFnName
 function filterLogsByFnName(array: Array<any>, fnName?: string) {
-    if(fnName) {
+    if (fnName) {
         return array.filter(entry => {
-            if(!!entry?.msg && typeof entry.msg === 'string') {
+            if (!!entry?.msg && typeof entry.msg === 'string') {
                 // Извлечение имени функции из ключа msg логга
                 const computeFnName: string = entry.msg.replace(/.*<|>.*/g, "");
-                if(computeFnName !== fnName) return false;
+                if (computeFnName !== fnName) return false;
                 else return true;
             }
         });
-    } 
+    }
     // Если фильтрация не была выполнена то возвращаем исходный массив
     else return array;
 }
 
 // Фильтрация массива полученных логгов исключая логи с имени функции 
 function filterLogsExcludeFnName(array: Array<any>, excludeFnName?: string) {
-    if(excludeFnName) {
+    if (excludeFnName) {
         return array.filter(entry => {
-            if(!!entry?.msg && typeof entry.msg === 'string') {
+            if (!!entry?.msg && typeof entry.msg === 'string') {
                 // Извлечение имени функции из ключа msg логга
                 const computeFnName: string = entry.msg.replace(/.*<|>.*/g, "");
-                if(computeFnName === excludeFnName) return false;
+                if (computeFnName === excludeFnName) return false;
                 else return true;
             }
         });
-    } 
+    }
     // Если фильтрация не была выполнена то возвращаем исходный массив
     else return array;
 }
 
 // Фильтрация массива полученных логгов по From Date Time (В результат ВКЛЮЧИТЕЛЬНО попадают логи с временем создания не ранее указанного в фильтрации времени)
 function filterLogsByFromDT(array: Array<any>, fromDT?: number) {
-    if(fromDT) {
+    if (fromDT) {
         return array.filter(entry => {
-            if(!!entry?.time && typeof entry.time === 'number') {
-                if(entry.time < fromDT) return false;
+            if (!!entry?.time && typeof entry.time === 'number') {
+                if (entry.time < fromDT) return false;
                 else return true;
             }
         });
-    } 
+    }
     // Если фильтрация не была выполнена то возвращаем исходный массив
     else return array;
 }
 
 // Фильтрация массива полученных логгов по To Date Time (В результат ВКЛЮЧИТЕЛЬНО попадают логи с временем создания не больше указанного в фильтрации времени)
 function filterLogsByToDT(array: Array<any>, toDT?: number) {
-    if(toDT) {
+    if (toDT) {
         return array.filter(entry => {
-            if(!!entry?.time && typeof entry.time === 'number') {
-                if(entry.time > toDT) return false;
+            if (!!entry?.time && typeof entry.time === 'number') {
+                if (entry.time > toDT) return false;
                 else return true;
             }
         });
-    } 
+    }
     // Если фильтрация не была выполнена то возвращаем исходный массив
     else return array;
 }

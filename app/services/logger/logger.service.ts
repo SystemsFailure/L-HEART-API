@@ -15,7 +15,7 @@ import { StdOut, LogFilterOptions } from '#services/logger/logger_pino_work_thre
 // Декоратор метода для логирования методов сервисов
 export function serviceLogger(target: any, key: string, descriptor: PropertyDescriptor): PropertyDescriptor {
     const originMethod: Function = descriptor.value;
-    
+
     descriptor.value = async function (...args: any[]) {
         try {
             await originMethod.apply(this, args);
@@ -30,7 +30,7 @@ export function serviceLogger(target: any, key: string, descriptor: PropertyDesc
 // Декоратор метода для логирования методов контроллеров
 export function controllerLogger(target: any, key: string, descriptor: PropertyDescriptor): PropertyDescriptor {
     const originMethod: Function = descriptor.value;
-    
+
     descriptor.value = async function (...args: any[]) {
         try {
             await originMethod.apply(this, args);
@@ -45,7 +45,7 @@ export function controllerLogger(target: any, key: string, descriptor: PropertyD
 // Декоратор метода для логирования методов базы данных
 export function databaseLogger(target: any, key: string, descriptor: PropertyDescriptor): PropertyDescriptor {
     const originMethod: Function = descriptor.value;
-    
+
     descriptor.value = async function (...args: any[]) {
         try {
             await originMethod.apply(this, args);
@@ -59,16 +59,16 @@ export function databaseLogger(target: any, key: string, descriptor: PropertyDes
 
 // Извлечение логов контроллеров из "root/logs/controllers.log"
 export async function extractControllersLogs(searchParams?: LogFilterOptions) {
-    return new Promise(( resolve, reject ) => {
+    return new Promise((resolve, reject) => {
         try {
             // Получение отфильтрованных логов из процесса-логгера 
             loggingProcess.once('message', ({ logs }: { logs: any }) => {
                 resolve(logs);
             });
             // Отправка запроса к процессу-логгеру на извлечение логов по фильтрации
-            loggingProcess.send({ 
-                scope: 'controllers' as LogScope, 
-                level: 'info' as logLevels, 
+            loggingProcess.send({
+                scope: 'controllers' as LogScope,
+                level: 'info' as logLevels,
                 message: `INFO | [logger]: <${extractControllersLogs.name}> function called`,
                 output: {
                     enable: true,
@@ -87,16 +87,16 @@ export async function extractControllersLogs(searchParams?: LogFilterOptions) {
 
 // Извлечение логов сервисов из "root/logs/services.log"
 export async function extractServicesLogs(searchParams?: LogFilterOptions) {
-    return new Promise(( resolve, reject ) => {
+    return new Promise((resolve, reject) => {
         try {
             // Получение отфильтрованных логов из процесса-логгера 
             loggingProcess.once('message', ({ logs }: { logs: any }) => {
                 resolve(logs);
             });
             // Отправка запроса к процессу-логгеру на извлечение логов по фильтрации
-            loggingProcess.send({ 
-                scope: 'services' as LogScope, 
-                level: 'info' as logLevels, 
+            loggingProcess.send({
+                scope: 'services' as LogScope,
+                level: 'info' as logLevels,
                 message: `INFO | [logger]: <${extractServicesLogs.name}> function called`,
                 output: {
                     enable: true,
@@ -115,16 +115,16 @@ export async function extractServicesLogs(searchParams?: LogFilterOptions) {
 
 // Извлечение логов сервисов из "root/logs/database.log"
 export async function extractDatabaseLogs(searchParams?: LogFilterOptions) {
-    return new Promise(( resolve, reject ) => {
+    return new Promise((resolve, reject) => {
         try {
             // Получение отфильтрованных логов из процесса-логгера 
             loggingProcess.once('message', ({ logs }: { logs: any }) => {
                 resolve(logs);
             });
             // Отправка запроса к процессу-логгеру на извлечение логов по фильтрации
-            loggingProcess.send({ 
-                scope: 'database' as LogScope, 
-                level: 'info' as logLevels, 
+            loggingProcess.send({
+                scope: 'database' as LogScope,
+                level: 'info' as logLevels,
                 message: `INFO | [logger]: <${extractDatabaseLogs.name}> function called`,
                 output: {
                     enable: true,
